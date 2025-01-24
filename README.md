@@ -7,7 +7,7 @@
 <body>
 
   <h1>Welcome to my website!</h1>
-  <p>This is a simple paragraph of text.</p>
+  <p>Tallahu akbar welcome .</p>
 
 </body>
 </html>
