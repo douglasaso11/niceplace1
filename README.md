@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>allahu akbar</title>
+ 
 </head>
 <body>
 
