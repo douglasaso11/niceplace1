@@ -1,116 +1,146 @@
-import turtle
+// HTML for a basic Pong game with JavaScript (for GitHub)
 
-# Screen setup
-wn = turtle.Screen()
-wn.title("Pong")
-wn.bgcolor("black")
-wn.setup(width=800, height=600)
-wn.tracer(0)  # Turns off screen updates
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Advanced Pong</title>
+  <style>
+    body {
+      overflow: hidden; /* Hide scrollbars */
+      margin: 0;
+    }
+    canvas {
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasWidth = 800;
+    const canvasHeight = 600;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
-# Paddle A
-paddle_a = turtle.Turtle()
-paddle_a.speed(0)
-paddle_a.shape("square")
-paddle_a.color("white")
-paddle_a.shapesize(stretch_wid=5, stretch_len=1)
-paddle_a.penup()
-paddle_a.goto(-350, 0)
+    // Paddle A
+    const paddleA = {
+      x: 10,
+      y: canvasHeight / 2 - 50,
+      width: 10,
+      height: 100,
+      color: 'white'
+    };
 
-# Paddle B
-paddle_b = turtle.Turtle()
-paddle_b.speed(0)
-paddle_b.shape("square")
-paddle_b.color("white")
-paddle_b.shapesize(stretch_wid=5, stretch_len=1)
-paddle_b.penup()
-paddle_b.goto(350, 0)
+    // Paddle B
+    const paddleB = {
+      x: canvasWidth - 20,
+      y: canvasHeight / 2 - 50,
+      width: 10,
+      height: 100,
+      color: 'white'
+    };
 
-# Ball
-ball = turtle.Turtle()
-ball.speed(0)
-ball.shape("circle")
-ball.color("white")
-ball.penup()
-ball.goto(0, 0)
-ball_dx = 0.2
-ball_dy = 0.2
+    // Ball
+    const ball = {
+      x: canvasWidth / 2,
+      y: canvasHeight / 2,
+      radius: 10,
+      speed: 5,
+      dx: 5,
+      dy: 5,
+      color: 'white'
+    };
 
-# Pen
-pen = turtle.Turtle()
-pen.speed(0)
-pen.color("white")
-pen.penup()
-pen.hideturtle()
-pen.goto(0, 260)
-pen.write("Player A: 0  Player B: 0", align="center", font=("Courier", 24, "normal"))
+    // Score
+    let scoreA = 0;
+    let scoreB = 0;
+    let level = 1;
 
-# Score
-score_a = 0
-score_b = 0
+    // Game loop
+    function gameLoop() {
+      requestAnimationFrame(gameLoop);
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-# Function to move paddles
-def paddle_a_up():
-    y = paddle_a.ycor()
-    y += 20
-    paddle_a.sety(y)
+      // Move ball
+      ball.x += ball.dx;
+      ball.y += ball.dy;
 
-def paddle_a_down():
-    y = paddle_a.ycor()
-    y -= 20
-    paddle_a.sety(y)
+      // Ball collisions
+      // ... (Collision detection logic - see below)
 
-def paddle_b_up():
-    y = paddle_b.ycor()
-    y += 20
-    paddle_b.sety(y)
+      // Paddle movement (using keyboard events - not included here)
+      // ...
 
-def paddle_b_down():
-    y = paddle_b.ycor()
-    y -= 20
-    paddle_b.sety(y)
+      // Draw objects
+      drawPaddle(paddleA);
+      drawPaddle(paddleB);
+      drawBall(ball);
 
-# Keyboard bindings
-wn.listen()
-wn.onkeypress(paddle_a_up, "w")
-wn.onkeypress(paddle_a_down, "s")
-wn.onkeypress(paddle_b_up, "Up")
-wn.onkeypress(paddle_b_down, "Down")
+      // Draw score and level
+      ctx.font = '24px Arial';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Player A: ${scoreA}  Player B: ${scoreB}  Level: ${level}`, canvasWidth / 2, 30);
+    }
 
-# Main game loop
-while True:
-    wn.update()
+    // Helper functions
+    function drawPaddle(paddle) {
+      ctx.fillStyle = paddle.color;
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    }
 
-    # Move the ball
-    ball.setx(ball.xcor() + ball_dx)
-    ball.sety(ball.ycor() + ball_dy)
+    function drawBall(ball) {
+      ctx.fillStyle = ball.color;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-    # Border checking
-    if ball.ycor() > 290:
-        ball.sety(290)
-        ball_dy *= -1
+    // ... (Add collision detection logic, keyboard event listeners, difficulty increase on level up, etc.)
 
-    if ball.ycor() < -290:
-        ball.sety(-290)
-        ball_dy *= -1
+    gameLoop();
+  </script>
+</body>
+</html>
 
-    # Paddle and ball collisions
-    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_b.ycor() + 40 and ball.ycor() > paddle_b.ycor() - 40):
-        ball_dx *= -1
+**Explanation:**
 
-    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 40 and ball.ycor() > paddle_a.ycor() - 40):
-        ball_dx *= -1
+1. **HTML Structure:**
+   - Basic HTML structure with a `<canvas>` element for drawing the game.
+   - `<script>` tag to include the JavaScript code.
 
-    # Scorekeeping
-    if ball.xcor() > 390:
-        ball.goto(0, 0)
-        ball_dx *= -1
-        score_a += 1
-        pen.clear()
-        pen.write("Player A: {}  Player B: {}".format(score_a, score_b), align="center", font=("Courier", 24, "normal"))
+2. **JavaScript Code:**
+   - **Initialization:**
+     - Get canvas context (`ctx`).
+     - Define game objects (paddles, ball) with initial positions, dimensions, and colors.
+     - Initialize scores and level.
+   - **Game Loop (`gameLoop()`):**
+     - `requestAnimationFrame(gameLoop)`: Creates a smooth animation loop.
+     - `ctx.clearRect()`: Clears the canvas for each frame.
+     - **Ball Movement:** Update ball position based on `dx` and `dy`.
+     - **Collision Detection:** (**Important:** Implement collision logic with paddles, walls, and score updates.)
+     - **Paddle Movement:** (**To be added:** Handle keyboard events to control paddle movement.)
+     - **Drawing:** Draw paddles, ball, and score/level on the canvas.
+   - **Helper Functions:**
+     - `drawPaddle()`: Draws a single paddle on the canvas.
+     - `drawBall()`: Draws the ball on the canvas.
 
-    if ball.xcor() < -390:
-        ball.goto(0, 0)
-        ball_dx *= -1
-        score_b += 1
-        pen.clear()
-        pen.write("Player A: {}  Player B: {}".format(score_a, score_b), align="center", font=("Courier", 24, "normal"))
+**Key Improvements for an "Advanced Pong":**
+
+- **Collision Detection:**
+   - Implement precise collision detection between the ball and paddles.
+   - Handle collisions with the top and bottom walls.
+   - Update scores correctly when the ball goes past a paddle.
+- **Paddle Movement:**
+   - Add event listeners for keyboard input (e.g., `keydown`, `keyup`).
+   - Update paddle positions based on user input.
+- **Difficulty Levels:**
+   - Increase ball speed or add AI opponents as the level increases.
+- **Visual Enhancements:**
+   - Add more visual effects (e.g., trails, power-ups).
+- **Sound Effects:**
+   - Include sound effects for collisions, scoring, etc.
+
+**To use this code on GitHub:**
